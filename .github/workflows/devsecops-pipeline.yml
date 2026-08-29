@@ -65,3 +65,17 @@ jobs:
           path: .
           format: cyclonedx-json
           output-file: sbom.cyclonedx.json
+
+  security-gate:
+    name: Política de Seguridad (Quality Gate)
+    runs-on: ubuntu-latest
+    needs: [trivy-scan, gitleaks-scan]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          severity: 'CRITICAL'
+          exit-code: '1'
+          ignore-unfixed: true
